@@ -1,35 +1,35 @@
 name: 'Docker Build and Push'
-description: 'Build a Docker image and push to docker hub'
+description: 'Build a Docker image and push to Docker Hub'
+
 inputs:
   name-and-tag:
-    description: 'Docker image name with tag'
+    description: 'Docker image name with tag (e.g., username/image:tag)'
     required: true
-    default: 'abc'
   dockerhub-username:
-    description: 'Dockerhub username'
+    description: 'Docker Hub username'
     required: true
-    default: 'no-dockerhub-username'
   dockerhub-password:
-    description: 'dockerhub password'
+    description: 'Docker Hub access token'
     required: true
-    default: 'no-dockerhub-password'
   context:
-    description: 'Docker folder'
+    description: 'Docker folder context'
     required: false
     default: '.'  
   dockerfile:
-    description: 'Dockerfile path'
+    description: 'Path to Dockerfile'
     required: false
     default: './Dockerfile'
   args:
-    description: 'Parameters to builder'
+    description: 'Build arguments'
     required: false
-    default: ''  
+    default: ''
+
 runs:
   using: "composite"
   steps:
-    - run: echo Inputs tag-name:${{ inputs.tag-name }}, dockerhub-username:${{ inputs.dockerhub-username }}, dockerhub-password:${{ inputs.dockerhub-password }}, context:${{ inputs.context }}, dockerfile:${{ inputs.dockerfile }}, args:${{ inputs.args }} 
+    - name: Debug inputs
       shell: bash
+      run: echo "Inputs - name-and-tag:${{ inputs.name-and-tag }}, context:${{ inputs.context }}, dockerfile:${{ inputs.dockerfile }}"
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -42,7 +42,7 @@ runs:
 
     - name: Build
       id: build_and_push
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         context: ${{ inputs.context }}
         file: ${{ inputs.dockerfile }}
